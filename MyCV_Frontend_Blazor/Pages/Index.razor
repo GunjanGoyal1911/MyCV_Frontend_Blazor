@@ -1,0 +1,100 @@
+﻿@page "/"
+@using MyCV_Frontend_Blazor.Data
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IHttpClientFactory ClientFactory
+
+
+
+@if (user != null)
+{
+    <div class="container bg-danger">
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <img class="rounded-circle" src="/images/gunjan.jpg" alt="Image of Person" />
+                </div>
+                <p><strong>Name:</strong> @user.FirstName @user.LastName</p>
+                <p><strong>Email:</strong> @user.Email</p>
+                <!-- Add more personal information fields as needed -->
+            </div>
+            <div class="col-md-6">
+                <!-- Skills -->
+                <h2>Skills</h2>
+                @if (user.Skills != null && user.Skills.Any())
+                {
+                    <ul>
+                        @foreach (var skill in user.Skills)
+                        {
+                            <li>@skill.SkillName - @skill.SkillLevel (Years of Experience: @skill.YearsOfExperience)</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No skills available</p>
+                }
+                <!-- Add more sections for displaying skills, projects, etc. -->
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Unable to retrieve CV information. Please try again later.</p>
+}
+
+@code {
+    private UserModel user = new UserModel();
+    private ClaimsPrincipal principalUser;    
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        principalUser = authState.User;
+        await UserData("https://localhost:7280");
+    }
+
+    public async Task UserData(string baseAddress)
+    {
+        try
+        {
+            // Create a new instance of HttpClient with the provided base address
+            using (var httpClient = new HttpClient { BaseAddress = new Uri(baseAddress) })
+            {
+                var loginUser = principalUser.Identity.Name;
+                // Make GET request to your API endpoint
+                var response = await httpClient.GetAsync("/users/" + loginUser);
+
+                // Check if the request was successful
+                if (response.IsSuccessStatusCode)
+                {
+                    // Deserialize the response body into a list of products
+                    user = await response.Content.ReadFromJsonAsync<UserModel>();
+                }
+                else
+                {
+                    // Handle error if the request was not successful
+                    // For example, you can log the error or display a message to the user
+                    Console.WriteLine("Failed to retrieve products. Status code: " + response.StatusCode);
+                    // await JSRuntime.InvokeVoidAsync("console.log", response.StatusCode);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions that occur during the request
+            Console.WriteLine("An error occurred while retrieving products: " + ex.Message);
+        }
+    }
+   
+    // public class GitHubBranch
+    // {
+    //     [JsonPropertyName("name")]
+    //     public string? Name { get; set; }
+    // }
+}
+
+

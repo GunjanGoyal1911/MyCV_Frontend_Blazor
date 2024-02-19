@@ -1,0 +1,279 @@
+﻿@page "/CreateCV"
+@using MyCV_Frontend_Blazor.Data
+@using MyCV_Frontend_Blazor.Services
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IApiService ApiService
+@* <style>
+    .valid.modified:not([type=checkbox]) {
+        outline: 1px solid #26b050;
+    }
+
+    .invalid {
+        outline: 1px solid red;
+    }
+
+    .validation-message {
+        color: red;
+    }
+</style> *@
+
+<h3>Create CV</h3>
+
+<EditForm Model=@userModel OnValidSubmit="@SaveCV">
+    <DataAnnotationsValidator />    
+
+    <div class="row mb-3">
+        <!-- User information -->
+        <label class="col-sm-2 col-form-label">User Information</label>
+        <div class="col-sm-10">
+            <!-- User fields -->
+            <!-- First Name -->
+            <div class="row mb-3">
+                <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
+                <div class="col-sm-10">
+                    <InputText @bind-Value=@userModel.FirstName class="form-control" id="firstName" />
+                    <ValidationMessage For="@(() => userModel.FirstName)" />
+                </div>
+            </div>
+            <!-- Last Name -->
+            <div class="row mb-3">
+                <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
+                <div class="col-sm-10">
+                    <InputText @bind-Value=@userModel.LastName class="form-control" id="lastName" />
+                    <ValidationMessage For="@(() => userModel.LastName)" />
+                </div>
+            </div>
+            <!-- Email -->
+            <div class="row mb-3">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                    <InputText @bind-Value=@userModel.Email class="form-control" id="email" />
+                    <ValidationMessage For="@(() => userModel.Email)"></ValidationMessage>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills information -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Skills</label>
+        <div class="col-sm-10">
+            <!-- Skills fields -->
+            <!-- You can use a foreach loop to render each skill -->
+            @foreach (var skill in userModel.Skills)
+            {               
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <!-- Skill Name -->
+                        <label for="skillName" class="col-form-label">Skill Name</label>
+                        <InputText @bind-Value="skill.SkillName" class="form-control" id="skillName" DisplayName="Skill Name" />
+                        <ValidationMessage For="@(() => skill.SkillName)" />
+                    </div>
+                    <div class="col-sm-4">
+                        <!-- Years of Experience -->
+                        <label for="yearsOfExperience" class="col-form-label">Years of Experience</label>
+                        <InputNumber @bind-Value="skill.YearsOfExperience" class="form-control" id="yearsOfExperience" />
+                        <ValidationMessage For="@(() => skill.YearsOfExperience)" />
+                    </div>
+                    <div class="col-sm-4">
+                        <!-- Skill Level -->
+                        <label for="skillLevel" class="col-form-label">Skill Level</label>
+                        <InputSelect @bind-Value="skill.SkillLevel" class="form-control" id="skillLevel">
+                            <option selected value="">Select</option>
+                            @foreach (var level in SkillLevels)
+                            {
+                                <option value="@level">@level</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => skill.SkillLevel)" />
+                    </div>
+                </div>
+            }
+            <!-- Add new skill button -->
+            <button class="btn btn-primary" @onclick="AddNewSkill">Add New Skill</button>
+        </div>
+    </div>
+
+    <!-- Projects information -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Projects</label>
+        <div class="col-sm-10">
+            <!-- Projects fields -->
+            <!-- You can use a foreach loop to render each project -->
+            @foreach (var project in userModel.Projects)
+            {
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <!-- Project Name -->
+                        <label for="projectName" class="col-form-label">Project Name</label>
+                        <InputText @bind-Value="project.ProjectName" class="form-control" id="projectName" />
+                        <ValidationMessage For="@(() => project.ProjectName)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <!-- Project Description -->
+                        <label for="projectDescription" class="col-form-label">Project Description</label>
+                        <InputTextArea @bind-Value="project.ProjectDescription" class="form-control" id="projectDescription" />
+                        <ValidationMessage For="@(() => project.ProjectDescription)" />
+                    </div>
+                </div>
+            }
+            <!-- Add new project button -->
+            <button class="btn btn-primary" @onclick="AddNewProject">Add New Project</button>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code
+{
+    UserModel userModel = new UserModel();
+    private ClaimsPrincipal user;
+    List<string> SkillLevels = new List<string> { "Beginner", "Intermediate", "Advanced" };
+    // protected override void OnInitialized()
+    // {
+    //     // Add a default skill and project to the collections
+    //     AddNewSkill();
+    //     AddNewProject();
+    // }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AddNewSkill();
+        AddNewProject();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+    }
+
+    // Method to add a new skill
+    void AddNewSkill()
+    {
+        userModel.Skills.Add(new Skill());
+    }
+
+    // Method to add a new project
+    void AddNewProject()
+    {
+        userModel.Projects.Add(new Project());
+    }
+
+    // Method to submit the data
+    async void SaveCV()
+    {
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            // Get the username from the ClaimsPrincipal
+           userModel.Username = user.Identity.Name;
+
+            // Or, you can get the username from the Claims
+            var usernameClaim = user.FindFirst(ClaimTypes.Name);
+            if (usernameClaim != null)
+            {
+                userModel.Username = usernameClaim.Value;
+            }
+        }
+        var response = await ApiService.CreateCV(userModel);
+    }
+
+   
+}
+
+
+@* <EditForm Model=@userModel OnValidSubmit="@SaveCV">
+    <DataAnnotationsValidator/>
+    
+        <div class="mb-3">
+            <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
+            <div class="col-sm-10">
+                <InputText @bind-Value=@userModel.FirstName class="form-control" id="firstName"/>
+                <ValidationMessage For="@(() =>userModel.FirstName)"/>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col-sm-10">
+                <InputText @bind-Value=@userModel.LastName class="form-control" id="lastName" />
+                <ValidationMessage For="@(() => userModel.LastName)"/>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+                <InputText @bind-Value =@userModel.Email class="form-control" id="email"/>
+                <ValidationMessage For="@(() => userModel.Email)"></ValidationMessage>
+            </div>
+        </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+ <div>
+    <Dropdown>
+    <DropdownToggleButton Color="ButtonColor.Secondary">Add Skills</DropdownToggleButton>
+    <DropdownMenu Class="px-4 py-3" Style="width:480px;">
+        <EditForm EditContext="@editContext">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label class="form-label">Skill Name: <span class="text-danger">*</span></label>
+               <InputText @bind-Value="skill.SkillName" class="form-control" Placeholder="Enter skill name" />
+                <ValidationMessage For="@(() => skill.SkillName)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Year Of Experience:</label>
+                <InputNumber @bind-Value="skill.YearsOfExperience" TValue="int" class="form-control" Placeholder="Enter year of experience"/>
+                <ValidationMessage For="@(() => skill.YearsOfExperience)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Skill Level: <span class="text-danger">*</span></label>
+                <InputSelect @bind-Value="skill.SkillLevel" class="form-control" >
+                    <option selected value="">Select</option>
+                            @foreach(var level in skillLevels)
+                            {
+                                <option  value="@level">@level</option>
+                            }
+                </InputSelect>               
+
+                <ValidationMessage For="@(() => skill.SkillLevel)" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" Class="float-end" @onclick="ResetForm">Reset</Button>
+                    <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Class="float-end me-2">Submit</Button>
+                </div>
+            </div>
+        </EditForm>
+    </DropdownMenu>
+    </Dropdown>
+</div> 
+
+@code 
+{
+    UserModel userModel = new UserModel();
+    private Skill skill = new();
+    private EditContext editContext = default!;
+    List<string> skillLevels = new List<string>();
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(skill);
+        skillLevels.Add("Entry level");
+        skillLevels.Add("Mid level"); 
+        skillLevels.Add("Senior level");
+        base.OnInitialized();
+    }
+    private void ResetForm()
+    {
+        skill = new();
+        editContext = new EditContext(skill);
+    }
+    void SaveCV()
+    {
+        // Perform save or update operation here
+        // For example, you can send the cvModel to an API endpoint to save it to the database
+        // Or you can handle the save operation directly within this method
+    }
+} *@

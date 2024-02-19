@@ -1,0 +1,57 @@
+﻿<div class="top-row ps-3 navbar navbar-dark" style="height:30%">
+    <div class="container-fluid">
+        @* <a class="navbar-brand" href="">MyCV</a> *@
+        <img class="rounded-circle" src="/images/gunjan.jpg" alt="Image of Person"/>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <a class="nav-link" href="">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> My CV
+            </a>
+           @*  <p class="text-white text-md-start text-sm-center">
+                Passionate Software Engineer
+                bringing professional experience
+                and expertise in cutting-edge
+                technologies like C#, ASP.NET,
+                Entity Framework, Front-End
+                Development, CSS, HTML5,
+                Bootstrap, Javascript, Blazor,
+                WPF, SQL, MongoDB, and
+                Firebase. Proven track record of
+                delivering high-quality results,
+                seeking to leverage my skills and
+                commitment to join your team.
+                Looking forward to contributing
+                my unparalleled proficiency and
+                accelerating mutual growth.
+            </p> *@
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/CreateCV">
+                <span class="oi oi-plus" aria-hidden="true"></span> CreateCV
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
