@@ -7,38 +7,181 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IHttpClientFactory ClientFactory
 
-
-
 @if (user != null)
 {
-    <div class="container bg-danger">
+    <div class="container col-md-8 shadow-sm mb-3" style="font-family:Georgia, 'Times New Roman', Times, serif">
         <div class="row">
-            <div class="col-md-6">
-                <div>
-                    <img class="rounded-circle" src="/images/gunjan.jpg" alt="Image of Person" />
+            <!-- Left Partition -->
+            <div class="col-md-3 text-white" style="background-color:darkslategrey">
+                <!-- Profile Picture and About Me -->
+                <div class="text-center mb-4 ps-2">
+                    <img src="./images/gunjan.jpg" alt="Profile Picture" class="rounded-circle mt-2" style="width: 80%">
+                    <h5 class="text-start text-primary mt-3 fw-bold">About me</h5>
+                    <p class="about-me-text mt-3">
+                        As a passionate Software Engineer, bringing my professional experience and expertise in cutting-edge technologies like C#, ASP.NET, CSS, HTML5,
+                        Bootstrap, Blazor, WPF, SQL, MongoDB. Proven track record of delivering high-quality results,seeking to leverage my skills and commitment to join your team.
+                        Looking forward to contributing my unparalleled proficiency and accelerating mutual growth.
+                    </p>
                 </div>
-                <p><strong>Name:</strong> @user.FirstName @user.LastName</p>
-                <p><strong>Email:</strong> @user.Email</p>
-                <!-- Add more personal information fields as needed -->
-            </div>
-            <div class="col-md-6">
+                <hr />
+                <div class="mb-4 mt-4 ps-2">
+                    <h4 class="text-primary fw-bold">Links</h4>
+                    <a href="https://github.com/GunjanGoyal1911" target="_blank"><img src="./images/Github1.png" alt="GitHub" class="bg-white rounded-circle" style="width:45px"></a>
+                    <a href="https://www.linkedin.com/in/gunjan-goyal-34851b151/" target="_blank"><img src="./images/Linkedin.png" alt="LinkedIn"></a>
+                </div>
+                <hr />
+
                 <!-- Skills -->
-                <h2>Skills</h2>
-                @if (user.Skills != null && user.Skills.Any())
-                {
-                    <ul>
-                        @foreach (var skill in user.Skills)
-                        {
-                            <li>@skill.SkillName - @skill.SkillLevel (Years of Experience: @skill.YearsOfExperience)</li>
-                        }
+                <div class="mb-4 mt-4 ps-2">
+                    <h4 class="text-primary fw-bold">Skills</h4>
+                    @if(user.Skills != null && user.Skills.Any())
+                    {
+                        <ul class="ps-0">
+                            @foreach (var skill in user.Skills)
+                            {
+                                <li class="skill-progress mb-2">
+                                    <div class="col-4"><span class="skill-name">@skill.SkillName </span></div>
+                                    <div class="progress-bar col-8" style="width: @MapSkillLevelToProgressBarWidth(skill.SkillLevel)%"></div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>No skills available</p>
+                    }                   
+                </div>
+                <hr />
+                <div class="mt-4 mb-4 ps-2">
+                    <h4 class="text-primary fw-bold">Certification</h4>
+                    <p>Certified Professional Scrum Master<br />(PSM I)</p>
+                    <p>Hisland Solution AB | Göteborg | June 2018</p>
+                </div>
+                <hr />
+                <div class="mt-4 mb-4 ps-2">
+                    <h4 class="text-primary fw-bold">Language</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">English</li>
+                        <li class="mb-3">Swedish</li>
+                        <li class="mb-3">Hindi</li>
                     </ul>
-                }
-                else
-                {
-                    <p>No skills available</p>
-                }
-                <!-- Add more sections for displaying skills, projects, etc. -->
+                </div>
+                <hr />
+                <div class="mt-4 mb-4 ps-2">
+                    <h4 class="text-primary fw-bold">Interests</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">Listening to Music</li>
+                        <li class="mb-3">Swimming</li>
+                        <li class="mb-3">Dancing</li>
+                    </ul>
+                </div>
+                
             </div>
+
+            <!-- Right Partition -->
+            <div class="col-md-9 ps-4" style="background-color: whitesmoke">
+                <!-- Top Section -->
+                <div class="d-flex justify-content-between mb-5 mt-4">
+                    <!-- Left Side: Name and Designation -->
+                    <div>
+                        <h1 class="text-uppercase">@user.FirstName</h1>
+                        <h1 class="text-uppercase">@user.LastName</h1>
+                        <h5>.NET Cloud Developer</h5>
+                    </div>
+                    <!-- Right Side: Contact Info -->
+                    <div>
+                        <div class="d-flex align-items-center">
+                          
+                            <i class="bi bi-geo-alt-fill me-2"></i> 
+                            <p class="m-0">Göteborg, Sweden</p>
+                        </div>
+                        <hr class="ms-4 mt-0" />
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            <p class="m-0">+46 769563766</p> 
+                        </div>
+                        <hr class="ms-4 mt-0" />
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            <p class="m-0">gunjangoyal1911@gmail.com</p> 
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="mb-5">
+                    <h5 class="text-primary text-uppercase fw-bold">Education</h5>
+                    <hr />
+                    <div class="mb-3">
+                        <h5 class="fs-4">.Net Cloud Developer</h5>
+                        <p>IT-Högskolan | 2023-2025 | Göteborg</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5 class="fs-4">Svenska som andra språk 3</h5>
+                        <p>Cuben Utbildning AB | 2018-2021 | Göteborg</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5 class="fs-4"> Master of Computer Application(MCA)</h5>
+                        <p> Dr. APJ Abdul Kalam Technical University | (2006-2009) | Ghaziabad, India</p>
+                    </div>
+
+                </div>
+                 
+                <!-- Experience --> 
+                <div class="mb-5">
+                    <h5 class="text-primary text-uppercase fw-bold">Experience</h5>
+                    <hr />
+                    <div class="mb-3">
+                        <h5 class="fs-3">Software Engineer Trainee</h5>
+                        <p>Hisland Solution AB | Göteborg | May 2018- June 2018</p>
+                        <p>
+                            • Executed various levels of app testing: Sanity, Functional, GUI,
+                            Integration, Regression<br />
+                            • Acquired sound understanding of functional specifications<br />
+                            • Kept updated with project developments for smooth defect
+                            resolution
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <h5 class="fs-3">Software Engineer</h5>
+                        <p>KDPMGI Buildwell Pvt. Ltd. | Noida | Aug 2009- Mar 2015</p>
+                        <p>
+                            • Skilled in designing, creating and maintaining .NET
+                            applications<br />
+                            • Proficient in translating requirements into functional apps<br />
+                            • Quick and effective at identifying and fixing application issues
+                        </p>
+                    </div>
+                </div>
+
+                
+
+                <!-- Projects -->
+                <div class="mb-4">
+                    <h5 class="text-primary text-uppercase fw-bold">Projects</h5>
+                    <hr />
+                    @if (user.Projects != null && user.Projects.Any())
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var project in user.Projects)
+                            {
+                               <li>
+                                    <h4>@project.ProjectName</h4>
+                                    <p>Role: Developer | Links: <a href="https://github.com/GunjanGoyal1911" class="text-decoration-none">GitHub</a></p>
+                                    <p>@project.ProjectDescription</p>
+                               </li>
+                            }
+                            
+                      
+                        </ul>                        
+                    }
+                    else
+                    {
+                        <p>No project available</p>
+                    }     
+                </div>
+            </div>
+            
         </div>
     </div>
 }
@@ -46,6 +189,9 @@ else
 {
     <p>Unable to retrieve CV information. Please try again later.</p>
 }
+
+
+
 
 @code {
     private UserModel user = new UserModel();
@@ -89,12 +235,21 @@ else
             Console.WriteLine("An error occurred while retrieving products: " + ex.Message);
         }
     }
+    private int MapSkillLevelToProgressBarWidth(string skillLevel)
+    {
+        switch (skillLevel.ToLower())
+        {
+            case "beginner":
+                return 25; // 30% width for Beginner
+            case "intermediate":
+                return 50; // 60% width for Intermediate
+            case "advanced":
+                return 75; // 90% width for Advanced
+            default:
+                return 0; // Default to 0% if level is not recognized
+        }
+    }
    
-    // public class GitHubBranch
-    // {
-    //     [JsonPropertyName("name")]
-    //     public string? Name { get; set; }
-    // }
 }
 
 

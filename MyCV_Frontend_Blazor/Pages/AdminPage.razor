@@ -1,0 +1,48 @@
+﻿@page "/AdminPage"
+@using MyCV_Frontend_Blazor.Data
+
+<h3>AdminPage</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Skill Name</th>
+            <th>Years of Experience</th>
+            <th>Skill Level</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var skill in Skills)
+        {
+            <tr>
+                <td>@skill.SkillName</td>
+                <td>@skill.YearsOfExperience</td>
+                <td>@skill.SkillLevel</td>
+                <td>
+                    <button @onclick="() => EditSkill(skill)">Edit</button>
+                    <button @onclick="() => DeleteSkill(skill)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+        public List<Skill> Skills { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadSkills();
+        }
+
+        private async Task LoadSkills()
+        {
+            using (var context = ContextFactory.CreateDbContext())
+            {
+                Skills = await context.Skills.ToListAsync();
+            }
+        }
+    }
+
+}

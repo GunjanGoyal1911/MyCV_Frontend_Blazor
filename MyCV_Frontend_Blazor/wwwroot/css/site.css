@@ -1,8 +1,28 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+#container-left{
+    width:30%;
+    height:100%
+}
+#container-right {
+    width: 70%;
+    height: 100%
+}
+.skill-progress {
+    display: flex;
+    align-items: center;
+}
 
-
-
+.progress-bar {
+    height: 8px;
+    background-color: #007bff;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+.about-me-text {
+    text-align: justify;
+    text-justify: inter-word;
+}
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
