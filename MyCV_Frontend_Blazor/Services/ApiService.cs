@@ -125,5 +125,32 @@ namespace MyCV_Frontend_Blazor.Services
                 Console.WriteLine($"Error delete skill: {ex.Message}");
             }
         }
+
+        public async Task<string> GetRandomJoke()
+        {
+            try
+            {
+                // Endpoint for random Chuck Norris joke
+                string apiUrl = "https://api.chucknorris.io/jokes/random";
+
+                // Make the GET request to the Chuck Norris API
+                var response = await _httpClient.GetFromJsonAsync<ChuckNorrisJokeResponse>(apiUrl);
+
+                if (response != null)
+                {
+                    return response.Value;
+                }
+                else
+                {
+                    return "Chuck Norris is too busy to tell a joke right now.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions or return null
+                Console.WriteLine($"Error getting Chuck Norris joke: {ex.Message}");
+                return "Chuck Norris doesn't have time for errors.";
+            }
+        }
     }
 }

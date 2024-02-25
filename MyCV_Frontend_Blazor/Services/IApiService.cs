@@ -14,6 +14,6 @@ namespace MyCV_Frontend_Blazor.Services
         Task<Project> UpdateProject(Project project);
         Task DeleteProject(int projectId);
 
-
+        Task<string> GetRandomJoke();
     }
 }

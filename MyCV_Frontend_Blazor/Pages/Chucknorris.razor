@@ -1,0 +1,33 @@
+﻿@page "/jokes"
+
+@using System.Threading.Tasks
+@using MyCV_Frontend_Blazor.Services
+@inject IApiService ApiService
+
+<h3>Chuck Norris Joke</h3>
+
+@if (string.IsNullOrEmpty(joke))
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>@joke</p>
+}
+
+<button @onclick="FetchJoke">Get Another Joke</button>
+
+@code {
+    private string joke;      
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchJoke();
+    }   
+    
+    private async Task FetchJoke()
+    {
+        joke = await ApiService.GetRandomJoke();
+        StateHasChanged();
+    }
+}
