@@ -10,5 +10,10 @@ namespace MyCV_Frontend_Blazor.Services
         Task<Skill>AddSkill(Skill skill);
         Task<Skill> UpdateSkill(Skill skill);
         Task DeleteSkill(int skillId);
+        Task<Project> AddProject(Project project);
+        Task<Project> UpdateProject(Project project);
+        Task DeleteProject(int projectId);
+
+
     }
 }

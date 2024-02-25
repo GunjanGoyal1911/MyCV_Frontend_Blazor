@@ -1,18 +1,18 @@
-﻿@page "/Admin"
+﻿@page "/ManageSkill"
 @using System.Security.Claims
 @using MyCV_Frontend_Blazor.Data
 @using MyCV_Frontend_Blazor.Services
+@using MyCV_Frontend_Blazor.Pages
 @inject IApiService ApiService
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 <h3>Skills</h3>
+
 <style>
     .modal {
         display: block;
     }
 </style>
-
-
 
 <EditForm Model="@newSkill">
     <DataAnnotationsValidator />
@@ -46,19 +46,6 @@
         <button class="btn btn-primary" @onclick="AddNewSkill">Add Skill</button>
 </EditForm>
 
-@* <div>
-    <label for="name">Skill Name:</label>
-    <input id="name" @bind="newSkill.SkillName" />
-
-    <label for="yearsOfExperience">Years of Experience:</label>
-    <input id="yearsOfExperience" @bind="newSkill.YearsOfExperience" />
-
-    <label for="skillLevel">Skill Level:</label>
-    <input id="skillLevel" @bind="newSkill.SkillLevel" />
-
-    <button @onclick="AddSkill">Add Skill</button>
-</div> *@
-
 @if (skills == null)
 {
     <p>Loading...</p>
@@ -82,8 +69,8 @@ else
                     <td>@skill.YearsOfExperience</td>
                     <td>@skill.SkillLevel</td>
                     <td>
-                        <button @onclick="() => EditSkill(skill)">Edit</button>
-                        <button @onclick="() => DeleteSkill(skill.SkillId)">Delete</button>
+                        <button class="btn btn-primary" @onclick="() => EditSkill(skill)">Edit</button>
+                        <button class="btn btn-primary" @onclick="() => DeleteSkill(skill.SkillId)">Delete</button>
                     </td>
                 </tr>
             }
@@ -109,8 +96,7 @@ else
             <button @onclick="CancelEdit">Cancel</button>
         </div>
     </div>
-}
- 
+} 
 
 @code {
     private List<Skill> skills;
@@ -119,8 +105,7 @@ else
     private Skill editedSkill = new Skill();
     private bool showEditForm = false;
     private ClaimsPrincipal principalUser;
-    List<string> SkillLevels = new List<string> { "Beginner", "Intermediate", "Advanced" };
-    private EditSkillPopup editSkillModel = new EditSkillPopup();
+    List<string> SkillLevels = new List<string> { "Beginner", "Intermediate", "Advanced" };   
     protected override async Task OnInitializedAsync()
     {
         try   
@@ -154,11 +139,8 @@ else
     private async Task DeleteSkill(int skillId)
     {
         try
-        {
-            // var itemToRemove = userModel.Skills.FirstOrDefault(r => r.SkillId == id);
-            // userModel.Skills.Remove(itemToRemove);           
-            await ApiService.DeleteSkill(skillId);
-            // skills = (await ApiService.GetAllAsync()).ToList();
+        {                   
+            await ApiService.DeleteSkill(skillId);           
             showEditForm = false;
             await OnInitializedAsync();
         }
@@ -167,7 +149,6 @@ else
             Console.Error.WriteLine($"Error updating skill: {ex.Message}");
         }
     }
-
 
     private void EditSkill(Skill skill)
     {
@@ -186,25 +167,13 @@ else
     private async Task UpdateSkill()
     {
         try
-        {
-            // var itemToRemove = userModel.Skills.Single(r => r.SkillId == editedSkill.SkillId);
-            // userModel.Skills.Remove(itemToRemove);
-
-            
-            
-            // userModel.Skills.Add(editedSkill);
-
+        { 
             await ApiService.UpdateSkill(editedSkill);
-
-            // skills = (await ApiService.GetAllAsync()).ToList();
             showEditForm = false;
-
-
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"Error updating skill: {ex.Message}");
-
         }
     }
 

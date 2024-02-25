@@ -154,9 +154,7 @@
                             • Quick and effective at identifying and fixing application issues
                         </p>
                     </div>
-                </div>
-
-                
+                </div>               
 
                 <!-- Projects -->
                 <div class="mb-4">
@@ -192,9 +190,6 @@ else
     <p>Unable to retrieve CV information. Please try again later.</p>
 }
 
-
-
-
 @code {
     private UserModel user = new UserModel();
     private ClaimsPrincipal principalUser;    
@@ -223,13 +218,13 @@ else
         switch (skillLevel.ToLower())
         {
             case "beginner":
-                return 25; // 30% width for Beginner
+                return 25; 
             case "intermediate":
-                return 50; // 60% width for Intermediate
+                return 50; 
             case "advanced":
-                return 75; // 90% width for Advanced
+                return 75; 
             default:
-                return 0; // Default to 0% if level is not recognized
+                return 0; 
         }
     }
    

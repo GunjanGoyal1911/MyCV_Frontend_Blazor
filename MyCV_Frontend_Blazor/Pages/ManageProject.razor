@@ -1,0 +1,168 @@
+﻿@page "/ManageProject"
+@using System.Security.Claims
+@using MyCV_Frontend_Blazor.Data
+@using MyCV_Frontend_Blazor.Pages
+@using MyCV_Frontend_Blazor.Services
+@inject IApiService ApiService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<style>
+    .modal {
+        display: block;
+    }
+</style>
+
+
+<h3>ManageProject</h3>
+<EditForm Model="@newProject">
+    <DataAnnotationsValidator />
+    <div class="row mb-3">
+        <div class="col-sm-6">
+            <!-- Project Name -->
+            <label for="projectName" class="col-form-label">Project Name</label>
+            <InputText @bind-Value="@newProject.ProjectName" class="form-control" id="projectName" />
+            <ValidationMessage For="@(() => newProject.ProjectName)" />
+        </div>
+        <div class="col-sm-6">
+            <!-- Project Description -->
+            <label for="projectDescription" class="col-form-label">Project Description</label>
+            <InputTextArea @bind-Value="@newProject.ProjectDescription" class="form-control" id="projectDescription" />
+            <ValidationMessage For="@(() => newProject.ProjectDescription)" />
+        </div>
+    </div>
+    <!-- Add new project button -->
+    <button class="btn btn-primary" @onclick="AddNewProject">Add Project</button>
+</EditForm>
+
+@if (projects == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Project Name</th>
+                <th>Project Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in projects)
+            {
+                <tr>
+                    <td>@project.ProjectName</td>
+                    <td>@project.ProjectDescription</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => EditProject(project)">Edit</button>
+                        <button class="btn btn-primary" @onclick="() => DeleteProject(project.ProjectId)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (showEditForm)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h3>Edit Project</h3>
+            <label for="editProjectName">Project Name:</label>
+            <input id="editProjectName" @bind="editedProject.ProjectName" />
+            <label for="editProjectDescription">Project Description:</label>
+            <input id="editProjectDescription" @bind="editedProject.ProjectDescription" />
+            <button @onclick="UpdateProject">Update Project</button>
+            <button @onclick="CancelEdit">Cancel</button>
+
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<Project> projects;
+    private Project newProject = new Project();
+    UserModel userModel = new UserModel();
+    private Project editedProject = new Project();
+    private bool showEditForm = false;
+    private ClaimsPrincipal principalUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var principalUser = authState.User;
+            var loginUser = principalUser.Identity.Name;
+            userModel = await ApiService.GetUserData(loginUser);
+            projects = userModel.Projects;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error fetching project: {ex.Message}");
+        }
+    }
+
+    private async Task AddNewProject()
+    {
+        try
+        {
+            userModel.Projects.Add(newProject);
+            userModel = await ApiService.UpdateUserData(userModel);
+            projects = userModel.Projects;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error fetching project: {ex.Message}");
+        }
+    }
+
+    private void EditProject(Project project)
+    {
+        editedProject = new Project
+            {
+                ProjectId = project.ProjectId,
+                ProjectName = project.ProjectName,
+                ProjectDescription = project.ProjectDescription,
+                
+            };
+        showEditForm = true;
+    }
+
+    private async Task DeleteProject(int projectId)
+    {
+        try
+        {
+            await ApiService.DeleteProject(projectId);
+            showEditForm = false;
+            await OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error deleteing project: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateProject()
+    {
+        try
+        {
+            await ApiService.UpdateProject(editedProject);
+            showEditForm = false;
+            await OnInitializedAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating skill: {ex.Message}");
+        }
+    }
+
+    private void CancelEdit()
+    {
+        showEditForm = false;
+    }
+
+}

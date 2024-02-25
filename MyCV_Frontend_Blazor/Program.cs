@@ -1,14 +1,9 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using MyCV_Frontend_Blazor.Areas.Identity;
 using MyCV_Frontend_Blazor.Data;
 using MyCV_Frontend_Blazor.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +18,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IApiService, ApiService>();
-//builder.Services.AddScoped<IJSRuntime, JSRuntime>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
