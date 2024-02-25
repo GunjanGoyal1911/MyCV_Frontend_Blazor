@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using MyCV_Frontend_Blazor.Areas.Identity;
 using MyCV_Frontend_Blazor.Data;
 using MyCV_Frontend_Blazor.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IApiService, ApiService>();
+//builder.Services.AddScoped<IJSRuntime, JSRuntime>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,5 +52,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
-
 app.Run();

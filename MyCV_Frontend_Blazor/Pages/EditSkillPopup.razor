@@ -1,0 +1,111 @@
+﻿@page "/EditSkillPopup"
+@using MyCV_Frontend_Blazor.Data
+@using MyCV_Frontend_Blazor.Services
+<!-- EditSkillModal.razor -->
+@inject IApiService ApiService
+@inject IJSRuntime JSRuntime
+ <div class="modal fade" id="editSkillModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Skill</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@editedSkill" OnValidSubmit="@UpdateSkill">
+                    <DataAnnotationsValidator />
+
+                    <div class="form-group">
+                        <label for="editSkillName">Skill Name</label>
+                        <InputText @bind-Value="@editedSkill.SkillName" class="form-control" id="editSkillName" />
+                        <ValidationMessage For="@(() => editedSkill.SkillName)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editYearsOfExperience">Years of Experience</label>
+                        <InputNumber @bind-Value="@editedSkill.YearsOfExperience" class="form-control" id="editYearsOfExperience" />
+                        <ValidationMessage For="@(() => editedSkill.YearsOfExperience)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editSkillLevel">Skill Level</label>
+                        <InputSelect @bind-Value="@editedSkill.SkillLevel" class="form-control" id="editSkillLevel">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => editedSkill.SkillLevel)" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <div id="exampleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>This is the modal body content.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+
+
+@code {
+    private Skill editedSkill = new Skill();
+    
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task UpdateSkill()
+    {
+        // Call the API to update the skill
+        // var updatedSkill = await ApiService.UpdateSkill(editedSkill);
+
+        // Optionally, close the modal after update
+        CloseModal();
+    }
+
+    private void CloseModal()
+    {
+        // Reset editedSkill and close the modal
+        editedSkill = new Skill();
+        HideModal();
+    }
+
+    private void HideModal()
+    {
+        // Use JavaScript interop to hide the modal
+        JSRuntime.InvokeVoidAsync("$('#EditSkillPopup').modal('hide')");
+    }
+
+    public async Task ShowModal()
+    {
+        await JSRuntime.InvokeVoidAsync("openModal");
+    }
+}
+
+
