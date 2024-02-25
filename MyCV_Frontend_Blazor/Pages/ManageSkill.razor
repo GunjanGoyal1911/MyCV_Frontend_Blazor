@@ -4,6 +4,7 @@
 @using MyCV_Frontend_Blazor.Services
 @using MyCV_Frontend_Blazor.Pages
 @inject IApiService ApiService
+@attribute [Authorize]
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 <h3>Skills</h3>
@@ -90,7 +91,14 @@ else
             <input id="editYearsOfExperience" @bind="editedSkill.YearsOfExperience" />
 
             <label for="editSkillLevel">Skill Level:</label>
-            <input id="editSkillLevel" @bind="editedSkill.SkillLevel" />
+            @* <input id="editSkillLevel" @bind="editedSkill.SkillLevel" /> *@
+            <InputSelect @bind-Value="@editedSkill.SkillLevel" class="form-control" id="skillLevel">
+                @* <option selected value="">Select</option> *@
+                @foreach (var level in SkillLevels)
+                {
+                    <option value="@level">@level</option>
+                }
+            </InputSelect>
 
             <button @onclick="UpdateSkill">Update Skill</button>
             <button @onclick="CancelEdit">Cancel</button>
@@ -128,7 +136,8 @@ else
         {
             userModel.Skills.Add(newSkill);
             userModel = await ApiService.UpdateUserData(userModel);
-            skills = userModel.Skills;           
+            skills = userModel.Skills;
+            ClearForm();
         }
         catch (Exception ex)
         {
@@ -170,6 +179,7 @@ else
         { 
             await ApiService.UpdateSkill(editedSkill);
             showEditForm = false;
+            await OnInitializedAsync();
         }
         catch (Exception ex)
         {
@@ -180,6 +190,12 @@ else
     private void CancelEdit()
     {
         showEditForm = false;
+    }
+
+    public void ClearForm()
+    {
+        newSkill = new Skill();      
+        StateHasChanged();
     }
 }
 

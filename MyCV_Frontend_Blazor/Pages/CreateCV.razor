@@ -147,7 +147,7 @@
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             // Get the username from the ClaimsPrincipal
-           userModel.Username = user.Identity.Name;
+            userModel.Username = user.Identity.Name;
 
             // Or, you can get the username from the Claims
             var usernameClaim = user.FindFirst(ClaimTypes.Name);
@@ -157,5 +157,14 @@
             }
         }
         var response = await ApiService.CreateCV(userModel);
-    }   
+        ClearForm();
+    } 
+    
+    public void ClearForm()
+    {
+        userModel = new UserModel();
+        userModel.Skills.Add(new Skill());
+        userModel.Projects.Add(new Project());
+        StateHasChanged();
+    }
 }

@@ -4,6 +4,7 @@
 @using MyCV_Frontend_Blazor.Pages
 @using MyCV_Frontend_Blazor.Services
 @inject IApiService ApiService
+@attribute [Authorize]
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -113,6 +114,7 @@ else
             userModel.Projects.Add(newProject);
             userModel = await ApiService.UpdateUserData(userModel);
             projects = userModel.Projects;
+            ClearForm();
         }
         catch (Exception ex)
         {
@@ -165,4 +167,9 @@ else
         showEditForm = false;
     }
 
+    public void ClearForm()
+    {
+        newProject = new Project();
+        StateHasChanged();
+    }
 }
